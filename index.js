@@ -16,6 +16,8 @@ getLocation.onclick = () => {
   function success({ coords }) {
     console.log("Location obtained", coords);
     getApiData(coords);
+    getLocation.classList.add("hidden");
+    //To go back to the beginning, add classList.remove("hidden")
   }
 
   function error({ message }) {
@@ -38,20 +40,33 @@ async function getApiData(coords) {
       cityRef.innerHTML = `<h2>Location name not available</h2>`;
     }
 
+    //
     const noonDates = [];
-
-    for (let i = 0; i < data.list.length; i++) {
-      const iReading = data.list[i].dt * 1000;
+    data.list.forEach((i) => {
+      const iReading = i.dt * 1000;
       const iDate = new Date(iReading);
       const dateCheck = iDate.getUTCHours();
-      let mainWeather = data.list[i].weather[0].main;
-      let temperature = Math.round(data.list[i].main.temp / 32);
+      let mainWeather = i.weather[0].main;
+      let temperature = Math.round(i.main.temp - 273.15);
 
       if (dateCheck === 12) {
         console.log(iDate, dateCheck, mainWeather);
         noonDates.push({ date: iDate, weather: mainWeather, temperature });
       }
-    }
+    });
+
+    // for (let i = 0; i < data.list.length; i++) {
+    //   const iReading = data.list[i].dt * 1000;
+    //   const iDate = new Date(iReading);
+    //   const dateCheck = iDate.getUTCHours();
+    //   let mainWeather = data.list[i].weather[0].main;
+    //   let temperature = Math.round(data.list[i].main.temp / 32);
+
+    //   if (dateCheck === 12) {
+    //     console.log(iDate, dateCheck, mainWeather);
+    //     noonDates.push({ date: iDate, weather: mainWeather, temperature });
+    //   }
+    // }
 
     let weatherHTML = "";
 
@@ -67,7 +82,7 @@ async function getApiData(coords) {
           break;
         case "Drizzle":
         case "Rain":
-          weatherIcon = "lightRain.svg";
+          weatherIcon = "rainLight.svg";
           break;
         case "Snow":
           weatherIcon = "snowLight.svg";
